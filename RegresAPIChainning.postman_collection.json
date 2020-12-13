@@ -1,0 +1,281 @@
+{
+	"info": {
+		"_postman_id": "a18476c1-2016-49a5-8cde-ad6794578d13",
+		"name": "Regres API Chainning",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Post",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "472856f2-6b0b-485c-935c-c77f77c43b39",
+						"exec": [
+							"console.log(\"Before API Call id : \"+ pm.environment.get(\"id\"))",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "954875ae-40db-4f11-9210-db497043aea7",
+						"exec": [
+							"payload= JSON.parse(responseBody);",
+							"",
+							"var nameValue= payload.name;",
+							"var lastnameValue= payload.lastname;",
+							"var idValue= payload.id;",
+							"",
+							"console.log(\"nameValue : \"+nameValue);",
+							"console.log(\"lastnameValue : \" +lastnameValue);",
+							"console.log(\"idValue : \" + idValue);",
+							"pm.environment.set(\"name\", nameValue);",
+							"pm.environment.set(\"lastname\", lastnameValue);",
+							"pm.environment.set(\"job\", payload.job);",
+							"pm.environment.set(\"id\", idValue);",
+							"",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"postman.setNextRequest(\"GetUserList\");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{name}}\",\n    \"lastname\":\"{{lastname}}\",\n    \"job\": \"{{job}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reqres.in/api/users",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateUser",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "06eb315a-67f5-44ff-bcca-f67ea5c5e2e5",
+						"exec": [
+							"pm.environment.set(\"name\", \"Holy\");",
+							"pm.environment.set(\"lastname\", \"Dolapci\");",
+							"",
+							"",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "d738f44d-dd90-45ef-b7b2-66b393335c4f",
+						"exec": [
+							"payload= JSON.parse(responseBody);",
+							"",
+							"var name= payload.name;",
+							"var lastname= payload.lastname;",
+							"var idValue= payload.id;",
+							"",
+							"pm.environment.set(\"name\", name);",
+							"pm.environment.set(\"lastname\", lastname);",
+							"pm.environment.set(\"id\", idValue);",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body matches name Elif\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Holy\");",
+							"});",
+							"",
+							"postman.setNextRequest(\"GetSingleUser\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{name}}\",\n    \"lastname\":\"{{lastname}}\",\n    \"id\": \"{{id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reqres.in/api/users/2",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUserList",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "40d5dc8e-9ceb-4e00-87b6-24f52bbd3f12",
+						"exec": [
+							"Body= JSON.parse(responseBody);",
+							"",
+							"var firstName = Body.data[1].first_name;",
+							"var lastName = Body.data[1].last_name;",
+							"var idValue= Body.data[1].id;",
+							"",
+							"console.log(firstName);",
+							"console.log(lastName);",
+							"console.log(idValue);",
+							"",
+							"pm.environment.set(\"id\", idValue);",
+							"pm.environment.set(\"name\", firstName);",
+							"pm.environment.set(\"lastname\",lastName);",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Body matches Tracey\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Michael\");",
+							"})",
+							"",
+							"",
+							"postman.setNextRequest(\"UpdateUser\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://reqres.in/api/users?page=2",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetSingleUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e4124244-c754-40a2-b705-d5cda2cf3802",
+						"exec": [
+							"postman.setNextRequest(null);",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://reqres.in/api/users/2",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "8f50bccf-820b-45fb-b28c-070f18b4466c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "d446aebd-23d6-4367-96b4-d336614378a7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "944fc33d-d07f-430c-98b1-f47484b3edb9",
+			"key": "page",
+			"value": "1"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
